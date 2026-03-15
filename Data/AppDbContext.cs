@@ -5,6 +5,6 @@ namespace WebApiFirst.Data
 {
     public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(options)
     {
-        DbSet<Character> Characters => Set<Character>();
+        public DbSet<Character> Characters => Set<Character>();
     }
 }

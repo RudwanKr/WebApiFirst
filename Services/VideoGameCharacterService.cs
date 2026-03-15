@@ -1,35 +1,42 @@
-﻿using WebApiFirst.Models;
+﻿using Microsoft.EntityFrameworkCore;
+using WebApiFirst.Data;
+using WebApiFirst.Dtos;
+using WebApiFirst.Models;
 
 namespace WebApiFirst.Services
 {
-    public class VideoGameCharacterService : IVideoGameCharacterService
+    public class VideoGameCharacterService(AppDbContext context) : IVideoGameCharacterService
     {
-        static List<Character> characters = new List<Character>
-        {
-            new Character { Id = 1, Name = "Mario", Game = "Super Mario Bros.", Role = "Hero" },
-            new Character { Id = 2, Name = "Link", Game = "The Legend of Zelda", Role = "Protagonist" },
-            new Character { Id = 3, Name = "Master Chief", Game = "Halo", Role = "Villain" }
-        };
-
-        public async Task<List<Character>> GetCharactersAsync()
-                => await Task.FromResult(characters);
-        public Task<List<Character>> AddCharacterAsync(Character character)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<List<Character>> DeleteCharacterAsync(int id)
+        public async Task<List<CharacterResponse>> GetCharactersAsync()
+        => await context.Characters
+            .Select(c => new CharacterResponse
+            {
+                Name = c.Name,
+                Game = c.Game,
+                Role = c.Role
+            })
+            .ToListAsync();
+        public Task<CharacterResponse> AddCharacterAsync(CharacterResponse character)
         {
             throw new NotImplementedException();
         }
 
-        public async  Task<Character?> GetCharacterByIdAsync(int id)
+        public Task<CharacterResponse> DeleteCharacterAsync(int id)
         {
-            var character = characters.FirstOrDefault(c => c.Id == id);
-            return await Task.FromResult(character);  
+            throw new NotImplementedException();
         }
 
-        public Task<List<Character>> UpdateCharacterAsync(int id, Character character)
+        public async  Task<CharacterResponse?> GetCharacterByIdAsync(int id)
+        {
+            return await context.Characters.Where(c => c.Id == id).Select(c => new CharacterResponse
+            {
+                Name = c.Name,
+                Game = c.Game,
+                Role = c.Role
+            }).FirstOrDefaultAsync();
+        }
+
+        public Task<CharacterResponse> UpdateCharacterAsync(int id, CharacterResponse character)
         {
             throw new NotImplementedException();
         }
