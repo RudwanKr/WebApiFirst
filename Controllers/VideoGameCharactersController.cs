@@ -17,7 +17,7 @@ namespace WebApiFirst.Controllers
         public async Task<ActionResult<Character>> CetCharacterById(int id)
         {
             var character = await service.GetCharacterByIdAsync(id);
-            return character is null? NotFound($"Character with id {id} not found") : Ok(character);
+            return character is null ? NotFound($"Character with id {id} not found") : Ok(character);
         }
     }
 }
