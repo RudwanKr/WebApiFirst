@@ -11,17 +11,35 @@ namespace WebApiFirst.Services
         => await context.Characters
             .Select(c => new CharacterResponse
             {
+                Id = c.Id,
                 Name = c.Name,
                 Game = c.Game,
                 Role = c.Role
             })
             .ToListAsync();
-        public Task<CharacterResponse> AddCharacterAsync(CharacterResponse character)
+        public async Task<CharacterResponse> AddCharacterAsync(CreateCharacterRequest character)
         {
-            throw new NotImplementedException();
+            var newCharacter = new Character
+            {
+                Name = character.Name,
+                Game = character.Game,
+                Role = character.Role
+            };
+
+            context.Characters.Add(newCharacter);
+
+            await context.SaveChangesAsync();
+
+            return new CharacterResponse
+            {
+                Id = newCharacter.Id,
+                Name = newCharacter.Name,
+                Game = newCharacter.Game,
+                Role = newCharacter.Role
+            };
         }
 
-        public Task<CharacterResponse> DeleteCharacterAsync(int id)
+        public Task<bool> DeleteCharacterAsync(int id)
         {
             throw new NotImplementedException();
         }
@@ -36,9 +54,21 @@ namespace WebApiFirst.Services
             }).FirstOrDefaultAsync();
         }
 
-        public Task<CharacterResponse> UpdateCharacterAsync(int id, CharacterResponse character)
+        public Task<bool> UpdateCharacterAsync(int id, UpdateCharacterRequest character)
         {
-            throw new NotImplementedException();
+            var c = context.Characters.Where(c => c.Id == id).Select(c => new CharacterResponse
+            {
+                Name = c.Name,
+                Game = c.Game,
+                Role = c.Role
+            });
+
+            context.Characters.Update(new Character
+            {
+                Name = character.Name,
+                Game = character.Game,
+                Role = character.Role
+            });
         }
     }
 }
