@@ -39,12 +39,18 @@ namespace WebApiFirst.Services
             };
         }
 
-        public Task<bool> DeleteCharacterAsync(int id)
+        public async Task<bool> DeleteCharacterAsync(int id)
         {
-            throw new NotImplementedException();
+            var existingCharacter = await context.Characters.FindAsync(id);
+            if (existingCharacter is null) return false;
+
+            context.Characters.Remove(existingCharacter);
+
+            await context.SaveChangesAsync();
+            return true;
         }
 
-        public async  Task<CharacterResponse?> GetCharacterByIdAsync(int id)
+        public async Task<CharacterResponse?> GetCharacterByIdAsync(int id)
         {
             return await context.Characters.Where(c => c.Id == id).Select(c => new CharacterResponse
             {
@@ -54,21 +60,17 @@ namespace WebApiFirst.Services
             }).FirstOrDefaultAsync();
         }
 
-        public Task<bool> UpdateCharacterAsync(int id, UpdateCharacterRequest character)
+        public async Task<bool> UpdateCharacterAsync(int id, UpdateCharacterRequest character)
         {
-            var c = context.Characters.Where(c => c.Id == id).Select(c => new CharacterResponse
-            {
-                Name = c.Name,
-                Game = c.Game,
-                Role = c.Role
-            });
+            var existingCharacter = await context.Characters.FindAsync(id);
+            if (existingCharacter is null) return false;
 
-            context.Characters.Update(new Character
-            {
-                Name = character.Name,
-                Game = character.Game,
-                Role = character.Role
-            });
+            existingCharacter.Name = character.Name;
+            existingCharacter.Game = character.Game;
+            existingCharacter.Role = character.Role;
+
+            await context.SaveChangesAsync();
+            return true;
         }
     }
 }
